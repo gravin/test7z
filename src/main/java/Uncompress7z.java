@@ -53,16 +53,15 @@ public class Uncompress7z {
                 num = num / N;
             }
 //            System.out.println(code);
-            SevenZFile zIn = new SevenZFile(srcFile, code.toCharArray(), SevenZFileOptions.builder().withMaxMemoryLimitInKb(8000).build());
+            SevenZFile zIn = new SevenZFile(srcFile, code.toCharArray());
             SevenZArchiveEntry entry = null;
             try {
                 while ((entry = zIn.getNextEntry()) != null) {
                     if (!entry.isDirectory()) {
                         int len = -1;
-                        byte[] buf = new byte[1];
 //                        while ((len = zIn.read(buf)) != -1) {
 //                        }
-                        len = zIn.read(buf);
+                        len = zIn.read();
                         if (len <= 0) {
                             throw new RuntimeException("wrong password");
                         }
