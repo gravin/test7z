@@ -7,10 +7,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 
 public class Uncompress7z {
@@ -58,6 +55,7 @@ public class Uncompress7z {
             int capitalCount = 0;
             int specialCount = 0;
 
+            Map<Character, Integer> countMap = new HashMap<>();
             for (int j = 0; j < code.length(); j++) {
                 char c = code.charAt(j);
                 if (c >= 'A' && c <= 'Z') {
@@ -66,11 +64,22 @@ public class Uncompress7z {
                 if (specialChars.contains(c)) {
                     specialCount++;
                 }
+                if (countMap.containsKey(c)) {
+                    countMap.put(c, 1);
+                } else {
+                    countMap.put(c, countMap.get(c) + 1);
+                }
             }
-
+            // 特殊字符和大写字符不应该出现超过二次
             if (specialCount > 2 || capitalCount > 2) {
                 continue;
             }
+            // 任何字符不应该出现超过三次
+            OptionalInt max = countMap.entrySet().stream().mapToInt(Map.Entry::getValue).max();
+            if (max.isPresent() && max.getAsInt() > 3) {
+                continue;
+            }
+
 //            System.out.println(code);
             SevenZFile zIn = new SevenZFile(srcFile, code.toCharArray());
             SevenZArchiveEntry entry = null;
