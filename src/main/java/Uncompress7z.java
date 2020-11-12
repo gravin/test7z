@@ -5,8 +5,11 @@ import org.tukaani.xz.CorruptedInputException;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 
@@ -24,16 +27,17 @@ public class Uncompress7z {
             throw new Exception(srcFile.getPath() + "所指文件不存在");
         }
         List<Character> candidates = new ArrayList<>();
-//        for (char c = 'a'; c <= 'z'; c++) {
-//            candidates.add(c);
-//        }
-//        for (char c = 'A'; c <= 'Z'; c++) {
-//            candidates.add(c);
-//        }
+        for (char c = 'a'; c <= 'z'; c++) {
+            candidates.add(c);
+        }
+        for (char c = 'A'; c <= 'Z'; c++) {
+            candidates.add(c);
+        }
         for (char i = '0'; i <= '9'; i++) {
             candidates.add(i);
         }
-//        candidates.addAll(Arrays.asList('!', '@', '?', ',', '\'', '"', '(', ')', '#', '+', '-', '='));
+        List<Character> specialChars = Arrays.asList('!', '@', '?', ',', '\'', '"', '(', ')', '#', '+', '-', '=');
+        candidates.addAll(specialChars);
 
         int N = candidates.size();
         long start = System.currentTimeMillis();
@@ -51,6 +55,22 @@ public class Uncompress7z {
                 code = code + candidates.get(k);
                 num = num / N;
             }
+            int capitalCount = 0;
+            int specialCount = 0;
+
+            for (int j = 0; j < code.length(); j++) {
+                char c = code.charAt(j);
+                if (c >= 'A' && c <= 'Z') {
+                    capitalCount++;
+                }
+                if (specialChars.contains(c)) {
+                    specialCount++;
+                }
+            }
+
+            if (specialCount > 2 || capitalCount > 2) {
+                continue;
+            }
 //            System.out.println(code);
             SevenZFile zIn = new SevenZFile(srcFile, code.toCharArray());
             SevenZArchiveEntry entry = null;
@@ -60,7 +80,7 @@ public class Uncompress7z {
                         int len = -1;
 //                        while ((len = zIn.read(buf)) != -1) {
 //                        }
-                        byte[] buf=new byte[1024];
+                        byte[] buf = new byte[1024];
                         len = zIn.read(buf);
                         if (len <= 0) {
                             throw new RuntimeException("wrong password");
