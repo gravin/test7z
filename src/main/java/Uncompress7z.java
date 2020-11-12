@@ -61,7 +61,8 @@ public class Uncompress7z {
                         int len = -1;
 //                        while ((len = zIn.read(buf)) != -1) {
 //                        }
-                        len = zIn.read();
+                        byte[] buf=new byte[1024];
+                        len = zIn.read(buf);
                         if (len <= 0) {
                             throw new RuntimeException("wrong password");
                         }
@@ -89,8 +90,8 @@ public class Uncompress7z {
     }
 
     public static void main(String[] args) throws Exception {
-//        SevenZFile zIn = new SevenZFile(new File("D:\\tst\\新建.7z"), "303".toCharArray());
-//        Uncompress("D:\\tst\\新建.7z","D:\\tst2","303");
+
+//        Uncompress("D:\\tst\\1.7z","D:\\tst2","221");
 
 //        如有分卷先合并
 //        copy /b 开发平台部署文件.7z.*  开发平台部署文件.7z
