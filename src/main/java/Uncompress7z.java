@@ -54,11 +54,15 @@ public class Uncompress7z {
             }
             int capitalCount = 0;
             int specialCount = 0;
+            boolean isCaptialInFirstPlace = true;
 
             Map<Character, Integer> countMap = new HashMap<>();
             for (int j = 0; j < code.length(); j++) {
                 char c = code.charAt(j);
                 if (c >= 'A' && c <= 'Z') {
+                    if (j != 0) {
+                        isCaptialInFirstPlace = false;
+                    }
                     capitalCount++;
                 }
                 if (specialChars.contains(c)) {
@@ -72,6 +76,10 @@ public class Uncompress7z {
             }
             // 特殊字符和大写字符不应该出现超过二次
             if (specialCount > 2 || capitalCount > 2) {
+                continue;
+            }
+            // 大写字符一般只出现在第一位
+            if(!isCaptialInFirstPlace){
                 continue;
             }
             // 任何字符不应该出现超过三次
