@@ -33,7 +33,14 @@ public class Uncompress7z {
         for (char i = '0'; i <= '9'; i++) {
             candidates.add(i);
         }
-        List<Character> specialChars = Arrays.asList('!', '@', '?', ',', '\'', '"', '(', ')', '#', '+', '-', '=');
+        List<Character> specialChars = new ArrayList<>();
+//        specialChars.addAll(Arrays.asList('!', '@', '?', ',', '\'', '"', '(', ')', '#', '+', '-', '='));
+        String charString = "`~!@#$%^&*()_+-=[]{}\\|;:'\"<,>.?/";
+        for (int i = 0; i < charString.length(); i++) {
+            specialChars.add(charString.charAt(i));
+        }
+        System.out.println("特殊字符集：" + specialChars);
+        System.out.println("候选字符集大小：" + candidates.size());
         candidates.addAll(specialChars);
 
         int N = candidates.size();
@@ -68,7 +75,7 @@ public class Uncompress7z {
                 if (specialChars.contains(c)) {
                     specialCount++;
                 }
-                if (countMap.containsKey(c)) {
+                if (!countMap.containsKey(c)) {
                     countMap.put(c, 1);
                 } else {
                     countMap.put(c, countMap.get(c) + 1);
@@ -79,7 +86,7 @@ public class Uncompress7z {
                 continue;
             }
             // 大写字符一般只出现在第一位
-            if(!isCaptialInFirstPlace){
+            if (!isCaptialInFirstPlace) {
                 continue;
             }
             // 任何字符不应该出现超过三次
