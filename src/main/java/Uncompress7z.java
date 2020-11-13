@@ -112,8 +112,8 @@ public class Uncompress7z {
                         break;
                     }
                 }
-                zIn.close();
                 System.out.println("code is " + code);
+                zIn.close();
                 System.exit(0);
             } catch (CorruptedInputException e) {
                 try {
